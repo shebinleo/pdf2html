@@ -29,19 +29,6 @@ pdf2html.html('sample.pdf', (err, html) => {
 })
 ```
 
-#### Convert as pages
-```javascript
-const pdf2html = require('pdf2html')
-
-pdf2html.pages('sample.pdf', { text: true }, (err, text) => {
-    if (err) {
-        console.error('Conversion error: ' + err)
-    } else {
-        console.log(text)
-    }
-})
-```
-
 #### Convert to text
 ```javascript
 const pdf2html = require('pdf2html')
@@ -51,6 +38,19 @@ pdf2html.text('sample.pdf', (err, text) => {
         console.error('Conversion error: ' + err)
     } else {
         console.log(text)
+    }
+})
+```
+
+#### Convert as pages
+```javascript
+const pdf2html = require('pdf2html')
+
+pdf2html.pages('sample.pdf', { text: true }, (err, pages) => {
+    if (err) {
+        console.error('Conversion error: ' + err)
+    } else {
+        console.log(pages)
     }
 })
 ```
