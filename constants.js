@@ -6,6 +6,8 @@ module.exports = {
   VENDOR_TIKA_JAR: 'tika-app-1.13.jar',
 
   DIRECTORY: {
+    PDF: path.join(__dirname, './files/pdf/'),
+    IMAGE: path.join(__dirname, './files/image/'),
     VENDOR: path.join(__dirname, './vendor/')
   }
 

@@ -1,7 +1,43 @@
 const debug = require('debug')('pdf2html')
 const cheerio = require('cheerio')
+const URI = require('urijs')
+const gm = require('gm').subClass({ imageMagick: true })
 const exec = require('child_process').exec
 const constants = require('./constants')
+
+const runPDFBox = (filePath, callback) => {
+  let uri = new URI(filePath)
+
+  const copyFilePath = constants.DIRECTORY.PDF + uri.filename()
+  fs.copyFile(filePath, copyFilePath, (err) => {
+    if (err) return callback(err)
+
+    exec(`java -jar ${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR} PDFToImage -imageType png -startPage 1 -endPage 1 ${copyFilePath}`, { maxBuffer: 1024 * 2000 }, (err) => {
+      if (err) return callback(err)
+
+      uri.suffix('png')
+      const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `1.${uri.suffix()}`)
+      const imageFilePath = constants.DIRECTORY.IMAGE + uri.filename()
+      // Resize image
+      gm(pdfBoxImageFilePath)
+        .resize(160, 226, '!') // use the '!' flag to ignore aspect ratio
+        .write(imageFilePath, (err) => {
+          if (err) return callback(err)
+
+          // delete temp image file created by PdfBox
+          fs.unlink(pdfBoxImageFilePath, (err) => {
+            if (err) return callback(err)
+
+            fs.readFile(imageFilePath, 'utf8', (err, data) => {
+              if (err) return callback(err)
+
+              return callback(null, data)
+            })
+          })
+        })
+    })
+  })
+}
 
 const runTika = (filePath, commandOption, callback) => {
   if (!commandOption) {
@@ -27,9 +63,9 @@ const pages = (filePath, options, callback) => {
   html(filePath, (err, html) => {
     if (err) return callback(err)
 
-    let $ = cheerio.load(html)
+    const $ = cheerio.load(html)
     let pages = []
-    let $pages = $('.page')
+    const $pages = $('.page')
     $pages.each((index) => {
       let $page = $pages.eq(index)
       pages.push(options.text ? $page.text().trim() : $page.html())
@@ -62,7 +98,15 @@ const meta = (filePath, callback) => {
   })
 }
 
+const thumbnail = (filePath, callback) => {
+  if (typeof callback !== 'function') return
+
+  debug('Generate thumbnail image for PDF')
+  runPDFBox(filePath, callback)
+}
+
 exports.html = html
 exports.pages = pages
 exports.text = text
 exports.meta = meta
+exports.thumbnail = thumbnail

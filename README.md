@@ -67,3 +67,16 @@ pdf2html.meta('sample.pdf', (err, meta) => {
     }
 })
 ```
+
+#### Generate thumbnail
+```javascript
+const pdf2html = require('pdf2html')
+
+pdf2html.thumbnail('sample.pdf', (err, thumbnail) => {
+    if (err) {
+        console.error('Conversion error: ' + err)
+    } else {
+        console.log(thumbnail)
+    }
+})
+```
