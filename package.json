@@ -1,0 +1,40 @@
+{
+  "name": "pdf2html",
+  "version": "1.0.0",
+  "description": "PDF to HTML conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "postinstall": "node postinstall.js"
+  },
+  "dependencies": {
+    "debug": "^3.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.0.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/shebinleovincent/pdf2html.git"
+  },
+  "keywords": [
+    "pdftohtml",
+    "tika",
+    "pdfbox",
+    "convert",
+    "pdf",
+    "html",
+    "thumbnail"
+  ],
+  "author": "Shebin Leo Vincent <shebinleovincent@gmail.com>",
+  "license": "ISC",
+  "pre-commit": [
+    "lint"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "extends" : [
+    "standard"
+  ],
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "strict": 0,
+    "arrow-parens": ["error", "always"]
+  }
+}
