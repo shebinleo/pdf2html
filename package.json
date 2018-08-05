@@ -9,6 +9,7 @@
     "postinstall": "node postinstall.js"
   },
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "debug": "^3.1.0"
   },
   "devDependencies": {

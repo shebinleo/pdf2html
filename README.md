@@ -5,7 +5,7 @@
 [![view on npm](http://img.shields.io/npm/l/pdf2html.svg)](https://www.npmjs.org/package/pdf2html)
 
 
-pdf2html is a module which helps to convert PDF file to HTML pages using [Apache Tika](https://tika.apache.org/). This module also helps to generate thumbnail image for PDF file using [Apache PDFBox](https://pdfbox.apache.org/).
+pdf2html helps to convert PDF file to HTML pages using [Apache Tika](https://tika.apache.org/). This module also helps to generate thumbnail image for PDF file using [Apache PDFBox](https://pdfbox.apache.org/).
 
 ### Installation
 via npm:
@@ -14,7 +14,7 @@ via npm:
 npm install --save pdf2html
 ```
 
-This version of the package is optimized for the [Node.js](https://nodejs.org/) environment and installable via `npm install --save pdf2html`. **Java runtime environment (JRE) is required to run this module.**
+**Java runtime environment (JRE) is required to run this module.**
 
 ### Usage
 ```javascript
@@ -25,6 +25,19 @@ pdf2html.html('sample.pdf', (err, html) => {
         console.error('Conversion error: ' + err)
     } else {
         console.log(html)
+    }
+})
+```
+
+#### Convert as pages
+```javascript
+const pdf2html = require('pdf2html')
+
+pdf2html.pages('sample.pdf', { text: true }, (err, text) => {
+    if (err) {
+        console.error('Conversion error: ' + err)
+    } else {
+        console.log(text)
     }
 })
 ```

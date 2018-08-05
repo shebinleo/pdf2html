@@ -1,4 +1,5 @@
 const debug = require('debug')('pdf2html')
+const cheerio = require('cheerio')
 const exec = require('child_process').exec
 const constants = require('./constants')
 
@@ -12,32 +13,56 @@ const runTika = (filePath, commandOption, callback) => {
   exec(command, { maxBuffer: 1024 * 2000 }, callback)
 }
 
-exports.html = (filePath, callback) => {
+const html = (filePath, callback) => {
+  if (typeof callback !== 'function') return
+
   debug('Converts PDF to HTML')
-  if (typeof callback === 'function') {
-    runTika(filePath, 'html', callback)
-  }
+  runTika(filePath, 'html', callback)
 }
 
-exports.text = (filePath, callback) => {
-  debug('Converts PDF to Text')
-  if (typeof callback === 'function') {
-    runTika(filePath, 'text', callback)
-  }
-}
+const pages = (filePath, options, callback) => {
+  if (typeof callback !== 'function') return
 
-exports.meta = (filePath, callback) => {
-  debug('Extracts meta information from PDF')
-  if (typeof callback === 'function') {
-    runTika(filePath, 'json', (err, meta) => {
-      if (err) return callback(err)
+  debug('Converts PDF to HTML pages')
+  html(filePath, (err, html) => {
+    if (err) return callback(err)
 
-      try {
-        const metaJSON = JSON.parse(meta)
-        return callback(null, metaJSON)
-      } catch (e) {
-        return callback(err)
-      }
+    let $ = cheerio.load(html)
+    let pages = []
+    let $pages = $('.page')
+    $pages.each((index) => {
+      let $page = $pages.eq(index)
+      pages.push(options.text ? $page.text().trim() : $page.html())
     })
-  }
+
+    return callback(null, pages)
+  })
 }
+
+const text = (filePath, callback) => {
+  if (typeof callback !== 'function') return
+
+  debug('Converts PDF to Text')
+  runTika(filePath, 'text', callback)
+}
+
+const meta = (filePath, callback) => {
+  if (typeof callback !== 'function') return
+
+  debug('Extracts meta information from PDF')
+  runTika(filePath, 'json', (err, meta) => {
+    if (err) return callback(err)
+
+    try {
+      const metaJSON = JSON.parse(meta)
+      return callback(null, metaJSON)
+    } catch (e) {
+      return callback(err)
+    }
+  })
+}
+
+exports.html = html
+exports.pages = pages
+exports.text = text
+exports.meta = meta
