@@ -27,14 +27,15 @@ const runPDFBox = (filePath, options, callback) => {
         .write(imageFilePath, (err) => {
           if (err) return callback(err)
 
-          // delete temp image file created by PdfBox
-          fs.unlink(pdfBoxImageFilePath, (err) => {
+          // delete temp pdf file copied
+          fs.unlink(copyFilePath, (err) => {
             if (err) return callback(err)
 
-            fs.readFile(imageFilePath, 'binary', (err, data) => {
+            // delete temp image file created by PdfBox
+            fs.unlink(pdfBoxImageFilePath, (err) => {
               if (err) return callback(err)
 
-              return callback(null, data)
+              return callback(null, imageFilePath)
             })
           })
         })
