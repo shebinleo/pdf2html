@@ -31,7 +31,7 @@ const runPDFBox = (filePath, options, callback) => {
           fs.unlink(pdfBoxImageFilePath, (err) => {
             if (err) return callback(err)
 
-            fs.readFile(imageFilePath, 'utf8', (err, data) => {
+            fs.readFile(imageFilePath, 'binary', (err, data) => {
               if (err) return callback(err)
 
               return callback(null, data)
