@@ -8,20 +8,25 @@ let dependencies = {
 }
 
 const download = (filename) => {
-  console.log(`Started downloading dependency ${filename}.`)
-  let request = http.get(dependencies[filename], (response) => {
-    if (response.statusCode === 200) {
-      const fileStream = fs.createWriteStream(constants.DIRECTORY.VENDOR + filename)
-      response.pipe(fileStream)
-      fileStream.addListener('finish', () => {
-        console.log(`Finished downloading dependency ${filename}.`)
+  const filePath = constants.DIRECTORY.VENDOR + filename
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.log(`Started downloading dependency ${filename}.`)
+      let request = http.get(dependencies[filename], (response) => {
+        if (response.statusCode === 200) {
+          const fileStream = fs.createWriteStream(filePath)
+          response.pipe(fileStream)
+          fileStream.addListener('finish', () => {
+            console.log(`Finished downloading dependency ${filename}.`)
+          })
+        } else {
+          throw new Error(`Failed downloading dependency ${filename}.`)
+        }
       })
-    } else {
-      throw new Error(`Failed downloading dependency ${filename}.`)
+      request.on('error', () => {
+        throw new Error(`Failed downloading dependency ${filename}.`)
+      })
     }
-  })
-  request.on('error', () => {
-    throw new Error(`Failed downloading dependency ${filename}.`)
   })
 }
 
