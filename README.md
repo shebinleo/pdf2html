@@ -75,22 +75,22 @@ pdf2html.meta('sample.pdf', (err, meta) => {
 
 #### Generate thumbnail
 ```javascript
-pdf2html.thumbnail('sample.pdf', (err, thumbnail) => {
+pdf2html.thumbnail('sample.pdf', (err, thumbnailPath) => {
     if (err) {
         console.error('Conversion error: ' + err)
     } else {
-        console.log(thumbnail)
+        console.log(thumbnailPath)
     }
 })
 ```
 
 ```javascript
 const options = { page: 1, imageType: 'png', width: 160, height: 226 }
-pdf2html.thumbnail('sample.pdf', options, (err, thumbnail) => {
+pdf2html.thumbnail('sample.pdf', options, (err, thumbnailPath) => {
     if (err) {
         console.error('Conversion error: ' + err)
     } else {
-        console.log(thumbnail)
+        console.log(thumbnailPath)
     }
 })
 ```
