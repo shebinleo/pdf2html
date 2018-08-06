@@ -1,26 +1,29 @@
 const debug = require('debug')('pdf2html')
 const cheerio = require('cheerio')
 const URI = require('urijs')
+const fs = require('fs')
+const defaults = require('lodash.defaults')
 const gm = require('gm').subClass({ imageMagick: true })
 const exec = require('child_process').exec
 const constants = require('./constants')
 
-const runPDFBox = (filePath, callback) => {
+const runPDFBox = (filePath, options, callback) => {
+  options = defaults(options || {}, { page: 1, imageType: 'png', width: 160, height: 226 })
   let uri = new URI(filePath)
 
   const copyFilePath = constants.DIRECTORY.PDF + uri.filename()
   fs.copyFile(filePath, copyFilePath, (err) => {
     if (err) return callback(err)
 
-    exec(`java -jar ${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR} PDFToImage -imageType png -startPage 1 -endPage 1 ${copyFilePath}`, { maxBuffer: 1024 * 2000 }, (err) => {
+    exec(`java -jar ${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR} PDFToImage -imageType ${options.imageType} -startPage ${options.page} -endPage ${options.page} ${copyFilePath}`, { maxBuffer: 1024 * 2000 }, (err) => {
       if (err) return callback(err)
 
-      uri.suffix('png')
+      uri.suffix(options.imageType)
       const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `1.${uri.suffix()}`)
       const imageFilePath = constants.DIRECTORY.IMAGE + uri.filename()
       // Resize image
       gm(pdfBoxImageFilePath)
-        .resize(160, 226, '!') // use the '!' flag to ignore aspect ratio
+        .resize(options.width, options.height, '!') // use the '!' flag to ignore aspect ratio
         .write(imageFilePath, (err) => {
           if (err) return callback(err)
 
@@ -57,7 +60,14 @@ const html = (filePath, callback) => {
 }
 
 const pages = (filePath, options, callback) => {
+  if (typeof options === 'function') {
+    callback = options
+    options = {}
+  }
+
   if (typeof callback !== 'function') return
+
+  options = defaults(options || {}, { text: false })
 
   debug('Converts PDF to HTML pages')
   html(filePath, (err, html) => {
@@ -98,11 +108,16 @@ const meta = (filePath, callback) => {
   })
 }
 
-const thumbnail = (filePath, callback) => {
+const thumbnail = (filePath, options, callback) => {
+  if (typeof options === 'function') {
+    callback = options
+    options = {}
+  }
+
   if (typeof callback !== 'function') return
 
   debug('Generate thumbnail image for PDF')
-  runPDFBox(filePath, callback)
+  runPDFBox(filePath, options, callback)
 }
 
 exports.html = html

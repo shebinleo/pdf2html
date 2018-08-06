@@ -31,8 +31,6 @@ pdf2html.html('sample.pdf', (err, html) => {
 
 #### Convert to text
 ```javascript
-const pdf2html = require('pdf2html')
-
 pdf2html.text('sample.pdf', (err, text) => {
     if (err) {
         console.error('Conversion error: ' + err)
@@ -44,21 +42,28 @@ pdf2html.text('sample.pdf', (err, text) => {
 
 #### Convert as pages
 ```javascript
-const pdf2html = require('pdf2html')
-
-pdf2html.pages('sample.pdf', { text: true }, (err, pages) => {
+pdf2html.pages('sample.pdf', (err, htmlPages) => {
     if (err) {
         console.error('Conversion error: ' + err)
     } else {
-        console.log(pages)
+        console.log(htmlPages)
+    }
+})
+```
+
+```javascript
+const options = { text: true }
+pdf2html.pages('sample.pdf', options, (err, textPages) => {
+    if (err) {
+        console.error('Conversion error: ' + err)
+    } else {
+        console.log(textPages)
     }
 })
 ```
 
 #### Extra metadata
 ```javascript
-const pdf2html = require('pdf2html')
-
 pdf2html.meta('sample.pdf', (err, meta) => {
     if (err) {
         console.error('Conversion error: ' + err)
@@ -70,9 +75,18 @@ pdf2html.meta('sample.pdf', (err, meta) => {
 
 #### Generate thumbnail
 ```javascript
-const pdf2html = require('pdf2html')
-
 pdf2html.thumbnail('sample.pdf', (err, thumbnail) => {
+    if (err) {
+        console.error('Conversion error: ' + err)
+    } else {
+        console.log(thumbnail)
+    }
+})
+```
+
+```javascript
+const options = { page: 1, imageType: 'png', width: 160, height: 226 }
+pdf2html.thumbnail('sample.pdf', options, (err, thumbnail) => {
     if (err) {
         console.error('Conversion error: ' + err)
     } else {
