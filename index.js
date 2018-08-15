@@ -25,19 +25,35 @@ const runPDFBox = (filePath, options, callback) => {
       gm(pdfBoxImageFilePath)
         .resize(options.width, options.height, '!') // use the '!' flag to ignore aspect ratio
         .write(imageFilePath, (err) => {
-          if (err) return callback(err)
-
-          // delete temp pdf file copied
-          fs.unlink(copyFilePath, (err) => {
-            if (err) return callback(err)
-
-            // delete temp image file created by PdfBox
-            fs.unlink(pdfBoxImageFilePath, (err) => {
+          if (!err) {
+            // delete temp pdf file copied
+            fs.unlink(copyFilePath, (err) => {
               if (err) return callback(err)
 
-              return callback(null, imageFilePath)
+              // delete temp image file created by PdfBox
+              fs.unlink(pdfBoxImageFilePath, (err) => {
+                if (err) return callback(err)
+
+                return callback(null, imageFilePath)
+              })
             })
-          })
+          } else {
+            fs.copyFile(pdfBoxImageFilePath, imageFilePath, (err) => {
+              if (err) return callback(err)
+
+              // delete temp pdf file copied
+              fs.unlink(copyFilePath, (err) => {
+                if (err) return callback(err)
+
+                // delete temp image file created by PdfBox
+                fs.unlink(pdfBoxImageFilePath, (err) => {
+                  if (err) return callback(err)
+
+                  return callback(null, imageFilePath)
+                })
+              })
+            })
+          }
         })
     })
   })
