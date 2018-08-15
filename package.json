@@ -27,6 +27,9 @@
     "type": "git",
     "url": "https://gitlab.com/shebinleovincent/pdf2html.git"
   },
+  "bugs": {
+    "url": "https://gitlab.com/shebinleovincent/pdf2html/issues"
+  },
   "keywords": [
     "pdftohtml",
     "tika",
@@ -37,7 +40,10 @@
     "thumbnail"
   ],
   "author": "Shebin Leo Vincent <shebinleovincent@gmail.com>",
-  "license": "ISC",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">= 6"
+  },
   "pre-commit": [
     "lint"
   ]
