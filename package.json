@@ -1,6 +1,6 @@
 {
   "name": "pdf2html",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "PDF to HTML conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
   "main": "index.js",
   "scripts": {
