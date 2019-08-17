@@ -9,16 +9,16 @@
     "postinstall": "node postinstall.js"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
-    "debug": "^3.1.0",
+    "cheerio": "^1.0.0-rc.3",
+    "debug": "^4.1.1",
     "gm": "^1.23.1",
     "lodash.defaults": "^4.2.0",
     "urijs": "^1.19.1"
   },
   "devDependencies": {
-    "eslint": "^5.0.1",
+    "eslint": "^5.16.0",
     "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^3.1.0"
