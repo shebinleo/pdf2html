@@ -25,10 +25,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/shebinleovincent/pdf2html.git"
+    "url": "https://github.com/shebinleo/pdf2html.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/shebinleovincent/pdf2html/issues"
+    "url": "https://github.com/shebinleo/pdf2html/issues"
   },
   "keywords": [
     "pdftohtml",
