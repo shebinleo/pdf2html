@@ -1,10 +1,10 @@
 {
   "name": "pdf2html",
   "version": "2.4.2",
-  "description": "PDF to HTML conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
+  "description": "PDF to HTML or Text conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0",
+    "test": "mocha",
     "lint": "eslint .",
     "postinstall": "node postinstall.js"
   },
@@ -16,12 +16,14 @@
     "urijs": "^1.19.1"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0"
+    "eslint-plugin-standard": "^3.1.0",
+    "mocha": "^6.2.0"
   },
   "repository": {
     "type": "git",
