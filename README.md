@@ -2,6 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/pdf2html.svg)](https://www.npmjs.com/package/pdf2html)
 [![npm module downloads](http://img.shields.io/npm/dt/pdf2html.svg)](https://www.npmjs.org/package/pdf2html)
+[![Build Status](https://travis-ci.org/shebinleo/pdf2html.svg?branch=master)](https://travis-ci.org/shebinleo/pdf2html)
 [![view on npm](http://img.shields.io/npm/l/pdf2html.svg)](https://www.npmjs.org/package/pdf2html)
 
 
