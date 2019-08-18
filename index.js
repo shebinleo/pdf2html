@@ -118,9 +118,9 @@ const meta = (filePath, callback) => {
 
     try {
       const metaJSON = JSON.parse(meta)
-      return callback(null, metaJSON)
+      return callback(undefined, metaJSON)
     } catch (e) {
-      return callback(err)
+      return callback(e)
     }
   })
 }
