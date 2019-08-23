@@ -9,6 +9,12 @@
 pdf2html helps to convert PDF file to HTML or Text using [Apache Tika](https://tika.apache.org/). This module also helps to generate thumbnail image for PDF file using [Apache PDFBox](https://pdfbox.apache.org/).
 
 ### Installation
+via yarn:
+
+```
+yarn add pdf2html
+```
+
 via npm:
 
 ```
