@@ -9,7 +9,7 @@ const constants = require('./constants')
 
 const runPDFBox = (filePath, options, callback) => {
   options = defaults(options || {}, { page: 1, imageType: 'png', width: 160, height: 226 })
-  let uri = new URI(filePath)
+  const uri = new URI(filePath)
 
   const copyFilePath = constants.DIRECTORY.PDF + uri.filename()
   fs.copyFile(filePath, copyFilePath, (err) => {
@@ -91,10 +91,10 @@ const pages = (filePath, options, callback) => {
     if (err) return callback(err)
 
     const $ = cheerio.load(html)
-    let pages = []
+    const pages = []
     const $pages = $('.page')
     $pages.each((index) => {
-      let $page = $pages.eq(index)
+      const $page = $pages.eq(index)
       pages.push(options.text ? $page.text().trim() : $page.html())
     })
 
