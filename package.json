@@ -13,17 +13,17 @@
     "debug": "^4.1.1",
     "gm": "^1.23.1",
     "lodash.defaults": "^4.2.0",
-    "urijs": "^1.19.1"
+    "urijs": "^1.19.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^6.2.2",
-    "eslint-config-standard": "^14.0.1",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^9.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^9.2.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "mocha": "^6.2.0"
+    "mocha": "^6.2.3"
   },
   "repository": {
     "type": "git",
