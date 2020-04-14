@@ -19,7 +19,7 @@ const runPDFBox = (filePath, options, callback) => {
       if (err) return callback(err)
 
       uri.suffix(options.imageType)
-      const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `1.${uri.suffix()}`)
+      const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `${options.page}.${uri.suffix()}`)
       const imageFilePath = constants.DIRECTORY.IMAGE + uri.filename()
       // Resize image
       gm(pdfBoxImageFilePath)
