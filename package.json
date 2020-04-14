@@ -32,9 +32,6 @@
   "bugs": {
     "url": "https://github.com/shebinleo/pdf2html/issues"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@shebinleo"
-  },
   "keywords": [
     "pdftohtml",
     "tika",
