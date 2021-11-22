@@ -101,3 +101,14 @@ pdf2html.thumbnail('sample.pdf', options, (err, thumbnailPath) => {
     }
 })
 ```
+
+### Manually download dependencies files
+
+Sometimes downloading the dependencies might be too slow or unable to download in a HTTP proxy environment. Follow the step below to skip the dependency downloads.
+
+```bash
+cd node_modules/pdf2html/vendor
+# These URLs come from https://github.com/shebinleo/pdf2html/blob/master/postinstall.js#L6-L7
+wget http://archive.apache.org/dist/pdfbox/2.0.16/pdfbox-app-2.0.16.jar
+wget http://archive.apache.org/dist/tika/tika-app-1.22.jar
+```
