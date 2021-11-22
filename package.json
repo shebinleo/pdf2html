@@ -44,7 +44,7 @@
   "author": "Shebin Leo Vincent <shebinleovincent@gmail.com>",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">= 8"
+    "node": ">= 12"
   },
   "pre-commit": [
     "lint"

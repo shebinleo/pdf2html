@@ -1,10 +1,10 @@
-const http = require('http')
+const https = require('https')
 const fs = require('fs')
 const constants = require('./constants')
 
 const dependencies = {
-  [constants.VENDOR_PDF_BOX_JAR]: 'http://archive.apache.org/dist/pdfbox/2.0.16/pdfbox-app-2.0.16.jar',
-  [constants.VENDOR_TIKA_JAR]: 'http://archive.apache.org/dist/tika/tika-app-1.22.jar'
+  [constants.VENDOR_PDF_BOX_JAR]: 'https://dlcdn.apache.org/pdfbox/2.0.24/pdfbox-app-2.0.24.jar',
+  [constants.VENDOR_TIKA_JAR]: 'https://dlcdn.apache.org/tika/2.1.0/tika-app-2.1.0.jar'
 }
 
 const download = (filename) => {
@@ -12,7 +12,7 @@ const download = (filename) => {
   fs.access(filePath, fs.constants.F_OK, (err) => {
     if (err) {
       console.log(`Started downloading dependency ${filename}.`)
-      const request = http.get(dependencies[filename], (response) => {
+      const request = https.get(dependencies[filename], (response) => {
         if (response.statusCode === 200) {
           const fileStream = fs.createWriteStream(filePath)
           response.pipe(fileStream)
