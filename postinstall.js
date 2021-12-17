@@ -3,8 +3,8 @@ const fs = require('fs')
 const constants = require('./constants')
 
 const dependencies = {
-  [constants.VENDOR_PDF_BOX_JAR]: 'https://dlcdn.apache.org/pdfbox/2.0.24/pdfbox-app-2.0.24.jar',
-  [constants.VENDOR_TIKA_JAR]: 'https://dlcdn.apache.org/tika/2.1.0/tika-app-2.1.0.jar'
+  [constants.VENDOR_PDF_BOX_JAR]: 'https://dlcdn.apache.org/pdfbox/2.0.25/pdfbox-app-2.0.25.jar',
+  [constants.VENDOR_TIKA_JAR]: 'https://dlcdn.apache.org/tika/2.2.0/tika-app-2.2.0.jar'
 }
 
 const download = (filename) => {
