@@ -10,18 +10,18 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.10",
-    "debug": "^4.3.2",
+    "debug": "^4.3.3",
     "gm": "^1.23.1",
     "lodash.defaults": "^4.2.0",
     "urijs": "^1.19.7"
   },
   "devDependencies": {
     "chai": "^4.3.4",
-    "eslint": "^8.3.0",
+    "eslint": "^8.5.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.1",
+    "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-standard": "^5.0.0",
     "mocha": "^9.1.3"
   },
