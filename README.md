@@ -110,5 +110,5 @@ Sometimes downloading the dependencies might be too slow or unable to download i
 cd node_modules/pdf2html/vendor
 # These URLs come from https://github.com/shebinleo/pdf2html/blob/master/postinstall.js#L6-L7
 wget https://dlcdn.apache.org/pdfbox/2.0.25/pdfbox-app-2.0.25.jar
-wget https://dlcdn.apache.org/tika/2.2.0/tika-app-2.2.0.jar
+wget https://dlcdn.apache.org/tika/2.2.1/tika-app-2.2.1.jar
 ```
