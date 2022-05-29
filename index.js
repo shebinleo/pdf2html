@@ -15,7 +15,7 @@ const runPDFBox = (filePath, options, callback) => {
   fs.copyFile(filePath, copyFilePath, (err) => {
     if (err) return callback(err)
 
-    exec(`java -jar ${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR} PDFToImage -imageType ${options.imageType} -startPage ${options.page} -endPage ${options.page} ${copyFilePath}`, { maxBuffer: 1024 * 2000 }, (err) => {
+    exec(`java -jar "${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR}" PDFToImage -imageType ${options.imageType} -startPage ${options.page} -endPage ${options.page} "${copyFilePath}"`, { maxBuffer: 1024 * 2000 }, (err) => {
       if (err) return callback(err)
 
       uri.suffix(options.imageType)
@@ -64,7 +64,7 @@ const runTika = (filePath, commandOption, callback) => {
     commandOption = 'html'
   }
 
-  const command = `java -jar ${constants.DIRECTORY.VENDOR + constants.VENDOR_TIKA_JAR} --${commandOption} ${filePath}`
+  const command = `java -jar "${constants.DIRECTORY.VENDOR + constants.VENDOR_TIKA_JAR}" --${commandOption} "${filePath}"`
   debug(command)
   exec(command, { maxBuffer: 1024 * 2000 }, callback)
 }
