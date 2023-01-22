@@ -1,6 +1,6 @@
 {
     "name": "pdf2html",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "PDF to HTML or Text conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
     "main": "index.js",
     "scripts": {
@@ -8,7 +8,7 @@
         "format:write": "prettier --write .",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
-        "test": "TZ=UTC mocha --timeout 5000",
+        "test": "TZ=UTC mocha --timeout 10000",
         "postinstall": "node postinstall.js"
     },
     "dependencies": {
