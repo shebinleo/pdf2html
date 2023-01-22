@@ -52,11 +52,25 @@ const textPages = await pdf2html.pages('sample.pdf', options);
 console.log(textPages);
 ```
 
-#### Extra metadata
+#### Extract metadata
 
 ```javascript
 const meta = await pdf2html.meta('sample.pdf');
 console.log(meta);
+```
+
+#### Customize maximum buffer to be used
+
+The maxBuffer option specifies the largest number of bytes allowed on stdout or stderr. If this value is exceeded, then the child process is terminated.
+
+By default, the maximum buffer size is 2MB. You can customize it by passing the `maxBuffer` option.
+
+```javascript
+await pdf2html.meta('sample.pdf', { maxBuffer: 1024 * 10000 }); // set maxBuffer to 10MB
+await pdf2html.html('sample.pdf', { maxBuffer: 1024 * 10000 });
+await pdf2html.text('sample.pdf', { maxBuffer: 1024 * 10000 });
+await pdf2html.pages('sample.pdf', { maxBuffer: 1024 * 10000 });
+await pdf2html.thumbnail('sample.pdf', { maxBuffer: 1024 * 10000 });
 ```
 
 #### Generate thumbnail

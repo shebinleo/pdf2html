@@ -60,9 +60,10 @@ const runPDFBox = async (filepath, _options) => {
     const copyFilePath = constants.DIRECTORY.PDF + uri.filename();
     await fse.copy(filepath, copyFilePath);
 
+    const maxBuffer = options.maxBuffer || 1024 * 2000;
     const command = 'java';
     const commandArgs = ['-jar', `${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR}`, 'PDFToImage', '-imageType', options.imageType, '-startPage', options.page, '-endPage', options.page, copyFilePath];
-    await executeCommand(command, commandArgs, { maxBuffer: 1024 * 2000 });
+    await executeCommand(command, commandArgs, { maxBuffer });
 
     uri.suffix(options.imageType);
 
@@ -84,23 +85,24 @@ const runPDFBox = async (filepath, _options) => {
     return imageFilePath;
 };
 
-const runTika = async (filepath, _commandOption) => {
+const runTika = async (filepath, _commandOption, options) => {
+    const maxBuffer = (options && options.maxBuffer) || 1024 * 2000;
     const commandOption = _commandOption || 'html';
     const command = 'java';
     const commandArgs = ['-jar', `${constants.DIRECTORY.VENDOR + constants.VENDOR_TIKA_JAR}`, `--${commandOption}`, filepath];
-    return executeCommand(command, commandArgs, { maxBuffer: 1024 * 2000 });
+    return executeCommand(command, commandArgs, { maxBuffer });
 };
 
-const html = async (filepath) => {
+const html = async (filepath, options) => {
     debug('Converts PDF to HTML');
-    return runTika(filepath, 'html');
+    return runTika(filepath, 'html', options);
 };
 
 const pages = async (filepath, _options) => {
     const options = defaults(_options || {}, { text: false });
 
     debug('Converts PDF to HTML pages');
-    const result = await html(filepath);
+    const result = await html(filepath, options);
     const $ = cheerio.load(result);
     const htmlPages = [];
     const $pages = $('.page');
@@ -111,14 +113,14 @@ const pages = async (filepath, _options) => {
     return htmlPages;
 };
 
-const text = async (filepath) => {
+const text = async (filepath, options) => {
     debug('Converts PDF to Text');
-    return runTika(filepath, 'text');
+    return runTika(filepath, 'text', options);
 };
 
-const meta = async (filepath) => {
+const meta = async (filepath, options) => {
     debug('Extracts meta information from PDF');
-    return JSON.parse(await runTika(filepath, 'json'));
+    return JSON.parse(await runTika(filepath, 'json', options));
 };
 
 const thumbnail = async (filepath, options) => {
