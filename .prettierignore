@@ -1,0 +1,7 @@
+# Ignore all folders:
+node_modules
+mnt
+
+# Ignore all files:
+.prettierrc
+*.json

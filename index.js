@@ -1,144 +1,133 @@
-const debug = require('debug')('pdf2html')
-const cheerio = require('cheerio')
-const URI = require('urijs')
-const fs = require('fs')
-const defaults = require('lodash.defaults')
-const gm = require('gm').subClass({ imageMagick: true })
-const exec = require('child_process').exec
-const constants = require('./constants')
+const debug = require('debug')('pdf2html');
+const cheerio = require('cheerio');
+const URI = require('urijs');
+const fse = require('fs-extra');
+const defaults = require('lodash.defaults');
+const gm = require('gm').subClass({ imageMagick: true });
+const { spawn } = require('child_process');
+const constants = require('./constants');
 
-const runPDFBox = (filePath, options, callback) => {
-  options = defaults(options || {}, { page: 1, imageType: 'png', width: 160, height: 226 })
-  const uri = new URI(filePath)
+const executeCommand = async (command, args, options = {}) => {
+    const child = spawn(command, args, { ...options });
+    return new Promise((resolve, reject) => {
+        debug(`Executing command: ${command} ${args.join(' ')} with options: ${JSON.stringify(options)}`);
 
-  const copyFilePath = constants.DIRECTORY.PDF + uri.filename()
-  fs.copyFile(filePath, copyFilePath, (err) => {
-    if (err) return callback(err)
+        let stdout = '';
+        // let stderr = '';
 
-    exec(`java -jar "${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR}" PDFToImage -imageType ${options.imageType} -startPage ${options.page} -endPage ${options.page} "${copyFilePath}"`, { maxBuffer: 1024 * 2000 }, (err) => {
-      if (err) return callback(err)
+        child.stdout.on('data', (data) => {
+            stdout += data.toString();
+        });
 
-      uri.suffix(options.imageType)
-      const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `${options.page}.${uri.suffix()}`)
-      const imageFilePath = constants.DIRECTORY.IMAGE + uri.filename()
-      // Resize image
-      gm(pdfBoxImageFilePath)
-        .resize(options.width, options.height, '!') // use the '!' flag to ignore aspect ratio
-        .write(imageFilePath, (err) => {
-          if (!err) {
-            // delete temp pdf file copied
-            fs.unlink(copyFilePath, (err) => {
-              if (err) return callback(err)
+        // child.stderr.on('data', function(data) {
+        //   stderr += data.toString();
+        // });
 
-              // delete temp image file created by PdfBox
-              fs.unlink(pdfBoxImageFilePath, (err) => {
-                if (err) return callback(err)
+        child.on('close', (code, signal) => {
+            if (code !== 0) {
+                reject(new Error(`${command} ${args.join(' ')} failed with exit code ${code} with signal ${signal}. Please check your console.`));
+                return;
+            }
 
-                return callback(null, imageFilePath)
-              })
-            })
-          } else {
-            fs.copyFile(pdfBoxImageFilePath, imageFilePath, (err) => {
-              if (err) return callback(err)
+            // if (stderr && stderr.length > 0) {
+            //   reject(new Error(stderr));
+            //   return;
+            // }
 
-              // delete temp pdf file copied
-              fs.unlink(copyFilePath, (err) => {
-                if (err) return callback(err)
+            resolve(stdout);
+        });
+    });
+};
 
-                // delete temp image file created by PdfBox
-                fs.unlink(pdfBoxImageFilePath, (err) => {
-                  if (err) return callback(err)
+const resizeImage = (sourceFilepath, targetFilepath, options) =>
+    new Promise((resolve, reject) => {
+        gm(sourceFilepath)
+            .resize(options.width, options.height, '!') // use the '!' flag to ignore aspect ratio
+            .write(targetFilepath, (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
 
-                  return callback(null, imageFilePath)
-                })
-              })
-            })
-          }
-        })
-    })
-  })
-}
+                resolve();
+            });
+    });
 
-const runTika = (filePath, commandOption, callback) => {
-  if (!commandOption) {
-    commandOption = 'html'
-  }
+const runPDFBox = async (filepath, _options) => {
+    const options = defaults(_options || {}, { page: 1, imageType: 'png', width: 160, height: 226 });
+    const uri = new URI(filepath);
 
-  const command = `java -jar "${constants.DIRECTORY.VENDOR + constants.VENDOR_TIKA_JAR}" --${commandOption} "${filePath}"`
-  debug(command)
-  exec(command, { maxBuffer: 1024 * 2000 }, callback)
-}
+    const copyFilePath = constants.DIRECTORY.PDF + uri.filename();
+    await fse.copy(filepath, copyFilePath);
 
-const html = (filePath, callback) => {
-  if (typeof callback !== 'function') return
+    const command = 'java';
+    const commandArgs = ['-jar', `${constants.DIRECTORY.VENDOR + constants.VENDOR_PDF_BOX_JAR}`, 'PDFToImage', '-imageType', options.imageType, '-startPage', options.page, '-endPage', options.page, copyFilePath];
+    await executeCommand(command, commandArgs, { maxBuffer: 1024 * 2000 });
 
-  debug('Converts PDF to HTML')
-  runTika(filePath, 'html', callback)
-}
+    uri.suffix(options.imageType);
 
-const pages = (filePath, options, callback) => {
-  if (typeof options === 'function') {
-    callback = options
-    options = {}
-  }
+    const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `${options.page}.${uri.suffix()}`);
+    const imageFilePath = constants.DIRECTORY.IMAGE + uri.filename();
 
-  if (typeof callback !== 'function') return
-
-  options = defaults(options || {}, { text: false })
-
-  debug('Converts PDF to HTML pages')
-  html(filePath, (err, html) => {
-    if (err) return callback(err)
-
-    const $ = cheerio.load(html)
-    const pages = []
-    const $pages = $('.page')
-    $pages.each((index) => {
-      const $page = $pages.eq(index)
-      pages.push(options.text ? $page.text().trim() : $page.html())
-    })
-
-    return callback(null, pages)
-  })
-}
-
-const text = (filePath, callback) => {
-  if (typeof callback !== 'function') return
-
-  debug('Converts PDF to Text')
-  runTika(filePath, 'text', callback)
-}
-
-const meta = (filePath, callback) => {
-  if (typeof callback !== 'function') return
-
-  debug('Extracts meta information from PDF')
-  runTika(filePath, 'json', (err, meta) => {
-    if (err) return callback(err)
-
+    // Resize image
     try {
-      const metaJSON = JSON.parse(meta)
-      return callback(undefined, metaJSON)
-    } catch (e) {
-      return callback(e)
+        await resizeImage(pdfBoxImageFilePath, imageFilePath, options);
+    } catch (err) {
+        await fse.copy(pdfBoxImageFilePath, imageFilePath);
+    } finally {
+        // delete temp pdf file copied
+        await fse.remove(copyFilePath);
+        // delete temp image file created by PdfBox
+        await fse.remove(pdfBoxImageFilePath);
     }
-  })
-}
 
-const thumbnail = (filePath, options, callback) => {
-  if (typeof options === 'function') {
-    callback = options
-    options = {}
-  }
+    return imageFilePath;
+};
 
-  if (typeof callback !== 'function') return
+const runTika = async (filepath, _commandOption) => {
+    const commandOption = _commandOption || 'html';
+    const command = 'java';
+    const commandArgs = ['-jar', `${constants.DIRECTORY.VENDOR + constants.VENDOR_TIKA_JAR}`, `--${commandOption}`, filepath];
+    return executeCommand(command, commandArgs, { maxBuffer: 1024 * 2000 });
+};
 
-  debug('Generate thumbnail image for PDF')
-  runPDFBox(filePath, options, callback)
-}
+const html = async (filepath) => {
+    debug('Converts PDF to HTML');
+    return runTika(filepath, 'html');
+};
 
-exports.html = html
-exports.pages = pages
-exports.text = text
-exports.meta = meta
-exports.thumbnail = thumbnail
+const pages = async (filepath, _options) => {
+    const options = defaults(_options || {}, { text: false });
+
+    debug('Converts PDF to HTML pages');
+    const result = await html(filepath);
+    const $ = cheerio.load(result);
+    const htmlPages = [];
+    const $pages = $('.page');
+    $pages.each((index) => {
+        const $page = $pages.eq(index);
+        htmlPages.push(options.text ? $page.text().trim() : $page.html());
+    });
+    return htmlPages;
+};
+
+const text = async (filepath) => {
+    debug('Converts PDF to Text');
+    return runTika(filepath, 'text');
+};
+
+const meta = async (filepath) => {
+    debug('Extracts meta information from PDF');
+    return JSON.parse(await runTika(filepath, 'json'));
+};
+
+const thumbnail = async (filepath, options) => {
+    debug('Generate thumbnail image for PDF');
+    return runPDFBox(filepath, options);
+};
+
+exports.html = html;
+exports.pages = pages;
+exports.text = text;
+exports.meta = meta;
+exports.thumbnail = thumbnail;
