@@ -1,1 +1,5 @@
-node_modules/**
+# This file will ignore to linting
+
+# ESLint will not recognize the file
+node_modules/*
+mnt/*

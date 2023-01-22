@@ -1,52 +1,57 @@
 {
-  "name": "pdf2html",
-  "version": "2.6.7",
-  "description": "PDF to HTML or Text conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
-  "main": "index.js",
-  "scripts": {
-    "test": "TZ=UTC mocha --timeout 5000",
-    "lint": "eslint .",
-    "postinstall": "node postinstall.js"
-  },
-  "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
-    "debug": "^4.3.4",
-    "gm": "^1.23.1",
-    "lodash.defaults": "^4.2.0",
-    "urijs": "^1.19.7"
-  },
-  "devDependencies": {
-    "chai": "^4.3.6",
-    "eslint": "^8.13.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-standard": "^5.0.0",
-    "mocha": "^9.2.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/shebinleo/pdf2html.git"
-  },
-  "bugs": {
-    "url": "https://github.com/shebinleo/pdf2html/issues"
-  },
-  "keywords": [
-    "pdftohtml",
-    "tika",
-    "pdfbox",
-    "convert",
-    "pdf",
-    "html",
-    "thumbnail"
-  ],
-  "author": "Shebin Leo Vincent <shebinleovincent@gmail.com>",
-  "license": "Apache-2.0",
-  "engines": {
-    "node": ">= 12"
-  },
-  "pre-commit": [
-    "lint"
-  ]
+    "name": "pdf2html",
+    "version": "2.6.7",
+    "description": "PDF to HTML or Text conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
+    "main": "index.js",
+    "scripts": {
+        "format:check": "prettier --check .",
+        "format:write": "prettier --write .",
+        "lint:check": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "test": "TZ=UTC mocha --timeout 5000",
+        "postinstall": "node postinstall.js"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0-rc.12",
+        "debug": "^4.3.4",
+        "fs-extra": "^11.1.0",
+        "gm": "^1.25.0",
+        "lodash.defaults": "^4.2.0",
+        "urijs": "^1.19.7"
+    },
+    "devDependencies": {
+        "chai": "^4.3.7",
+        "chai-as-promised": "^7.1.1",
+        "eslint": "^8.18.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "mocha": "^10.2.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "prettier": "^2.7.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/shebinleo/pdf2html.git"
+    },
+    "bugs": {
+        "url": "https://github.com/shebinleo/pdf2html/issues"
+    },
+    "keywords": [
+        "pdftohtml",
+        "tika",
+        "pdfbox",
+        "convert",
+        "pdf",
+        "html",
+        "thumbnail"
+    ],
+    "author": "Shebin Leo Vincent <shebinleovincent@gmail.com>",
+    "license": "Apache-2.0",
+    "engines": {
+        "node": ">= 14"
+    },
+    "pre-commit": [
+        "lint"
+    ]
 }
