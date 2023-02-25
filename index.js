@@ -54,7 +54,7 @@ const resizeImage = (sourceFilepath, targetFilepath, options) =>
     });
 
 const runPDFBox = async (filepath, _options) => {
-    const options = defaults(_options || {}, { page: 1, imageType: 'png', width: 160, height: 226 });
+    const options = defaults(_options || {}, { page: 1, imageType: 'png', width: 160, height: 226, outputDir: constants.DIRECTORY.IMAGE });
     const uri = new URI(filepath);
 
     const copyFilePath = constants.DIRECTORY.PDF + uri.filename();
@@ -68,7 +68,7 @@ const runPDFBox = async (filepath, _options) => {
     uri.suffix(options.imageType);
 
     const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `${options.page}.${uri.suffix()}`);
-    const imageFilePath = constants.DIRECTORY.IMAGE + uri.filename();
+    const imageFilePath = outputDir + uri.filename();
 
     // Resize image
     try {
