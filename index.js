@@ -68,7 +68,7 @@ const runPDFBox = async (filepath, _options) => {
     uri.suffix(options.imageType);
 
     const pdfBoxImageFilePath = constants.DIRECTORY.PDF + uri.filename().replace(new RegExp(`.${uri.suffix()}$`), `${options.page}.${uri.suffix()}`);
-    const imageFilePath = outputDir + uri.filename();
+    const imageFilePath = options.outputDir + uri.filename();
 
     // Resize image
     try {
