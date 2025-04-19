@@ -12,23 +12,23 @@
         "postinstall": "node postinstall.js"
     },
     "dependencies": {
-        "cheerio": "^1.0.0-rc.12",
-        "debug": "^4.3.4",
-        "fs-extra": "^11.1.0",
-        "gm": "^1.25.0",
+        "cheerio": "^1.0.0",
+        "debug": "^4.4.0",
+        "fs-extra": "^11.3.0",
+        "gm": "^1.25.1",
         "lodash.defaults": "^4.2.0",
-        "urijs": "^1.19.7"
+        "urijs": "^1.19.11"
     },
     "devDependencies": {
-        "chai": "^4.3.7",
-        "chai-as-promised": "^7.1.1",
-        "eslint": "^8.18.0",
+        "chai": "^4.5.0",
+        "chai-as-promised": "^7.1.2",
+        "eslint": "^8.57.1",
         "eslint-config-airbnb-base": "^15.0.0",
-        "eslint-config-prettier": "^8.5.0",
-        "eslint-plugin-import": "^2.26.0",
-        "mocha": "^10.2.0",
-        "eslint-plugin-prettier": "^4.0.0",
-        "prettier": "^2.7.1"
+        "eslint-config-prettier": "^10.1.2",
+        "eslint-plugin-import": "^2.31.0",
+        "eslint-plugin-prettier": "^5.2.6",
+        "mocha": "^11.1.0",
+        "prettier": "^3.5.3"
     },
     "repository": {
         "type": "git",
