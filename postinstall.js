@@ -301,7 +301,7 @@ async function main() {
         console.log('\n');
 
         // Check for errors
-        const errors = results.filter((result) => result && result.error);
+        const errors = results.filter((result) => result?.error);
 
         if (errors.length > 0) {
             console.error('❌ Post-install completed with errors:');
