@@ -22,7 +22,7 @@
 
 ## 📋 Prerequisites
 
-- **Node.js** >= 14.0.0
+- **Node.js** >= 12.0.0
 - **Java Runtime Environment (JRE)** >= 8
     - Required for Apache Tika and PDFBox
     - [Download Java](https://www.java.com/en/download/)
@@ -140,6 +140,131 @@ const thumbnailPath = await pdf2html.thumbnail(pdfBuffer, {
     width: 300, // Width in pixels (default: 160)
     height: 400, // Height in pixels (default: 226)
 });
+```
+
+## 💻 TypeScript Support
+
+This package includes TypeScript type definitions out of the box. No need to install `@types/pdf2html`.
+
+### Basic TypeScript Usage
+
+```typescript
+import * as pdf2html from 'pdf2html';
+// or
+import { html, text, pages, meta, thumbnail, PDFMetadata, PDFProcessingError } from 'pdf2html';
+
+async function convertPDF() {
+    try {
+        // All methods accept string paths or Buffers
+        const htmlContent: string = await pdf2html.html('document.pdf');
+        const textContent: string = await pdf2html.text(Buffer.from(pdfData));
+
+        // Full type safety for options
+        const thumbnailPath = await pdf2html.thumbnail('document.pdf', {
+            page: 1, // number
+            imageType: 'png', // 'png' | 'jpg'
+            width: 300, // number
+            height: 400, // number
+        });
+
+        // TypeScript knows the shape of metadata
+        const metadata: PDFMetadata = await pdf2html.meta('document.pdf');
+        console.log(metadata['pdf:producer']); // string | undefined
+        console.log(metadata.resourceName); // string | undefined
+    } catch (error) {
+        if (error instanceof pdf2html.PDFProcessingError) {
+            console.error('PDF processing failed:', error.message);
+            console.error('Exit code:', error.exitCode);
+        }
+    }
+}
+```
+
+### Type Definitions
+
+```typescript
+// Input types - all methods accept either file paths or Buffers
+type PDFInput = string | Buffer;
+
+// Options interfaces
+interface ProcessingOptions {
+    maxBuffer?: number; // Maximum buffer size in bytes
+}
+
+interface PageOptions extends ProcessingOptions {
+    text?: boolean; // Extract text instead of HTML
+}
+
+interface ThumbnailOptions extends ProcessingOptions {
+    page?: number; // Page number (default: 1)
+    imageType?: 'png' | 'jpg'; // Image format (default: 'png')
+    width?: number; // Width in pixels (default: 160)
+    height?: number; // Height in pixels (default: 226)
+}
+
+// Metadata structure with common fields
+interface PDFMetadata {
+    'pdf:PDFVersion'?: string;
+    'pdf:producer'?: string;
+    'xmp:CreatorTool'?: string;
+    'dc:title'?: string;
+    'dc:creator'?: string;
+    resourceName?: string;
+    [key: string]: any; // Allows additional properties
+}
+
+// Error class
+class PDFProcessingError extends Error {
+    command?: string; // The command that failed
+    exitCode?: number; // The process exit code
+}
+```
+
+### IntelliSense Support
+
+Full IntelliSense support in VS Code and other TypeScript-aware editors:
+
+![TypeScript IntelliSense](https://via.placeholder.com/600x200?text=IntelliSense+Demo)
+
+- Auto-completion for all methods and options
+- Inline documentation on hover
+- Type checking at compile time
+- Catch errors before runtime
+
+### Advanced TypeScript Usage
+
+```typescript
+import { PDFProcessor, utils } from 'pdf2html';
+
+// Using the PDFProcessor class directly
+const html = await PDFProcessor.toHTML('document.pdf');
+
+// Using utility classes
+const { FileManager, HTMLParser } = utils;
+await FileManager.ensureDirectories();
+
+// Type guards
+function isPDFProcessingError(error: unknown): error is pdf2html.PDFProcessingError {
+    return error instanceof pdf2html.PDFProcessingError;
+}
+
+// Generic helper with proper typing
+async function processPDFSafely<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
+    try {
+        return await operation();
+    } catch (error) {
+        if (isPDFProcessingError(error)) {
+            console.error(`PDF operation failed: ${error.message}`);
+        }
+        return fallback;
+    }
+}
+
+// Usage
+const pages = await processPDFSafely(
+    () => pdf2html.pages('document.pdf', { text: true }),
+    [] // fallback to empty array
+);
 ```
 
 ## ⚙️ Advanced Configuration
@@ -307,7 +432,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
