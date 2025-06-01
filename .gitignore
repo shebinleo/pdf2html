@@ -57,3 +57,6 @@ temp/
 
 # Optional REPL history
 .node_repl_history
+
+temp-tsconfig.json
+temp-type-test.ts

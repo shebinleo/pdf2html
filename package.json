@@ -1,8 +1,9 @@
 {
     "name": "pdf2html",
-    "version": "4.1.1",
+    "version": "4.2.0",
     "description": "PDF to HTML or Text conversion using Apache Tika. Also generate PDF thumbnail using Apache PDFBox.",
     "main": "index.js",
+    "types": "index.d.ts",
     "scripts": {
         "format:check": "prettier --check .",
         "format:write": "prettier --write .",
@@ -15,6 +16,7 @@
         "test:coverage:lcov": "nyc report --reporter=lcovonly",
         "test:coverage:summary": "nyc report --reporter=text-summary",
         "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80 --statements 80",
+        "test:types": "node validate-types.js",
         "postinstall": "node postinstall.js"
     },
     "dependencies": {
@@ -26,6 +28,7 @@
         "urijs": "^1.19.11"
     },
     "devDependencies": {
+        "@types/node": "^22.15.29",
         "chai": "^4.5.0",
         "chai-as-promised": "^7.1.2",
         "eslint": "^8.57.1",
@@ -35,7 +38,9 @@
         "eslint-plugin-prettier": "^5.2.6",
         "mocha": "^11.5.0",
         "nyc": "^17.1.0",
-        "prettier": "^3.5.3"
+        "prettier": "^3.5.3",
+        "tsd": "^0.32.0",
+        "typescript": "^5.8.3"
     },
     "repository": {
         "type": "git",
@@ -86,10 +91,22 @@
         "functions": 80,
         "branches": 80,
         "watermarks": {
-            "lines": [80, 95],
-            "functions": [80, 95],
-            "branches": [80, 95],
-            "statements": [80, 95]
+            "lines": [
+                80,
+                95
+            ],
+            "functions": [
+                80,
+                95
+            ],
+            "branches": [
+                80,
+                95
+            ],
+            "statements": [
+                80,
+                95
+            ]
         }
     }
 }
