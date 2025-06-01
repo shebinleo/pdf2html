@@ -16,7 +16,7 @@
         "test:coverage:lcov": "nyc report --reporter=lcovonly",
         "test:coverage:summary": "nyc report --reporter=text-summary",
         "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80 --statements 80",
-        "test:types": "node validate-types.js",
+        "test:types": "tsc --project test/tsconfig.json",
         "postinstall": "node postinstall.js"
     },
     "dependencies": {
