@@ -15,6 +15,7 @@
 - **Page-by-page processing** - Process PDFs page by page
 - **Metadata extraction** - Extract author, title, creation date, and more
 - **Thumbnail generation** - Generate preview images from PDF pages
+- **Buffer support** - Process PDFs from memory buffers or file paths
 - **TypeScript support** - Full type definitions included
 - **Async/Promise based** - Modern async API
 - **Configurable** - Extensive options for customization
@@ -54,13 +55,19 @@ The installation process will automatically download the required Apache Tika an
 
 ```javascript
 const pdf2html = require('pdf2html');
+const fs = require('fs');
 
-// Simple conversion
+// From file path
 const html = await pdf2html.html('path/to/document.pdf');
 console.log(html);
 
+// From buffer
+const pdfBuffer = fs.readFileSync('path/to/document.pdf');
+const html = await pdf2html.html(pdfBuffer);
+console.log(html);
+
 // With options
-const html = await pdf2html.html('path/to/document.pdf', {
+const html = await pdf2html.html(pdfBuffer, {
     maxBuffer: 1024 * 1024 * 10, // 10MB buffer
 });
 ```
@@ -68,22 +75,30 @@ const html = await pdf2html.html('path/to/document.pdf', {
 ### Extract Text
 
 ```javascript
-// Extract all text from PDF
+// From file path
 const text = await pdf2html.text('path/to/document.pdf');
+
+// From buffer
+const pdfBuffer = fs.readFileSync('path/to/document.pdf');
+const text = await pdf2html.text(pdfBuffer);
 console.log(text);
 ```
 
 ### Process Pages Individually
 
 ```javascript
-// Get HTML for each page
+// From file path
 const htmlPages = await pdf2html.pages('path/to/document.pdf');
+
+// From buffer
+const pdfBuffer = fs.readFileSync('path/to/document.pdf');
+const htmlPages = await pdf2html.pages(pdfBuffer);
 htmlPages.forEach((page, index) => {
     console.log(`Page ${index + 1}:`, page);
 });
 
 // Get text for each page
-const textPages = await pdf2html.pages('path/to/document.pdf', {
+const textPages = await pdf2html.pages(pdfBuffer, {
     text: true,
 });
 ```
@@ -91,7 +106,8 @@ const textPages = await pdf2html.pages('path/to/document.pdf', {
 ### Extract Metadata
 
 ```javascript
-const metadata = await pdf2html.meta('path/to/document.pdf');
+// From file path or buffer
+const metadata = await pdf2html.meta(pdfBuffer);
 console.log(metadata);
 // Output: {
 //   title: 'Document Title',
@@ -109,12 +125,16 @@ console.log(metadata);
 ### Generate Thumbnails
 
 ```javascript
-// Generate thumbnail with default settings
+// From file path
 const thumbnailPath = await pdf2html.thumbnail('path/to/document.pdf');
+
+// From buffer
+const pdfBuffer = fs.readFileSync('path/to/document.pdf');
+const thumbnailPath = await pdf2html.thumbnail(pdfBuffer);
 console.log('Thumbnail saved to:', thumbnailPath);
 
 // Custom thumbnail options
-const thumbnailPath = await pdf2html.thumbnail('path/to/document.pdf', {
+const thumbnailPath = await pdf2html.thumbnail(pdfBuffer, {
     page: 1, // Page number (default: 1)
     imageType: 'png', // 'png' or 'jpg' (default: 'png')
     width: 300, // Width in pixels (default: 160)
@@ -162,48 +182,48 @@ try {
 
 ## 🏗️ API Reference
 
-### `pdf2html.html(filepath, [options])`
+### `pdf2html.html(input, [options])`
 
 Converts PDF to HTML format.
 
-- **filepath** `string` - Path to the PDF file
+- **input** `string | Buffer` - Path to the PDF file or PDF buffer
 - **options** `object` (optional)
     - `maxBuffer` `number` - Maximum buffer size in bytes (default: 2MB)
 - **Returns:** `Promise<string>` - HTML content
 
-### `pdf2html.text(filepath, [options])`
+### `pdf2html.text(input, [options])`
 
 Extracts text from PDF.
 
-- **filepath** `string` - Path to the PDF file
+- **input** `string | Buffer` - Path to the PDF file or PDF buffer
 - **options** `object` (optional)
     - `maxBuffer` `number` - Maximum buffer size in bytes
 - **Returns:** `Promise<string>` - Extracted text
 
-### `pdf2html.pages(filepath, [options])`
+### `pdf2html.pages(input, [options])`
 
 Processes PDF page by page.
 
-- **filepath** `string` - Path to the PDF file
+- **input** `string | Buffer` - Path to the PDF file or PDF buffer
 - **options** `object` (optional)
     - `text` `boolean` - Extract text instead of HTML (default: false)
     - `maxBuffer` `number` - Maximum buffer size in bytes
 - **Returns:** `Promise<string[]>` - Array of HTML or text strings
 
-### `pdf2html.meta(filepath, [options])`
+### `pdf2html.meta(input, [options])`
 
 Extracts PDF metadata.
 
-- **filepath** `string` - Path to the PDF file
+- **input** `string | Buffer` - Path to the PDF file or PDF buffer
 - **options** `object` (optional)
     - `maxBuffer` `number` - Maximum buffer size in bytes
 - **Returns:** `Promise<object>` - Metadata object
 
-### `pdf2html.thumbnail(filepath, [options])`
+### `pdf2html.thumbnail(input, [options])`
 
 Generates a thumbnail image from PDF.
 
-- **filepath** `string` - Path to the PDF file
+- **input** `string | Buffer` - Path to the PDF file or PDF buffer
 - **options** `object` (optional)
     - `page` `number` - Page to thumbnail (default: 1)
     - `imageType` `string` - 'png' or 'jpg' (default: 'png')
