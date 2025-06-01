@@ -9,6 +9,12 @@
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
         "test": "TZ=UTC mocha --timeout 10000",
+        "test:coverage": "nyc npm test",
+        "test:coverage:report": "nyc report --reporter=html",
+        "test:coverage:text": "nyc report --reporter=text",
+        "test:coverage:lcov": "nyc report --reporter=lcovonly",
+        "test:coverage:summary": "nyc report --reporter=text-summary",
+        "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80 --statements 80",
         "postinstall": "node postinstall.js"
     },
     "dependencies": {
@@ -28,6 +34,7 @@
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-prettier": "^5.2.6",
         "mocha": "^11.5.0",
+        "nyc": "^17.1.0",
         "prettier": "^3.5.3"
     },
     "repository": {
@@ -53,5 +60,36 @@
     },
     "pre-commit": [
         "lint"
-    ]
+    ],
+    "nyc": {
+        "all": true,
+        "include": [
+            "index.js",
+            "lib/**/*.js"
+        ],
+        "exclude": [
+            "test/**",
+            "vendor/**",
+            "node_modules/**",
+            "coverage/**",
+            "postinstall.js",
+            ".nyc_output/**"
+        ],
+        "reporter": [
+            "text",
+            "html",
+            "lcov"
+        ],
+        "check-coverage": true,
+        "lines": 80,
+        "statements": 80,
+        "functions": 80,
+        "branches": 80,
+        "watermarks": {
+            "lines": [80, 95],
+            "functions": [80, 95],
+            "branches": [80, 95],
+            "statements": [80, 95]
+        }
+    }
 }
