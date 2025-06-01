@@ -37,6 +37,9 @@ jobs:
       - name: Build (if present)
         run: npm run build --if-present
 
+      - name: Run TypeScript type tests
+        run: npm run test:types
+
       - name: Run tests with coverage
         run: npm run test:coverage
         continue-on-error: ${{ matrix.experimental == true }}
