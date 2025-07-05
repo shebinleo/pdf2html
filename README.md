@@ -224,8 +224,6 @@ class PDFProcessingError extends Error {
 
 Full IntelliSense support in VS Code and other TypeScript-aware editors:
 
-![TypeScript IntelliSense](https://via.placeholder.com/600x200?text=IntelliSense+Demo)
-
 - Auto-completion for all methods and options
 - Inline documentation on hover
 - Type checking at compile time
@@ -373,10 +371,10 @@ If automatic download fails (e.g., due to network restrictions), you can manuall
     cd node_modules/pdf2html/vendor
 
     # Download Apache PDFBox
-    wget https://archive.apache.org/dist/pdfbox/2.0.33/pdfbox-app-2.0.33.jar
+    wget https://archive.apache.org/dist/pdfbox/2.0.34/pdfbox-app-2.0.34.jar
 
     # Download Apache Tika
-    wget https://archive.apache.org/dist/tika/3.1.0/tika-app-3.1.0.jar
+    wget https://archive.apache.org/dist/tika/3.2.0/tika-app-3.2.0.jar
     ```
 
 3. Verify the files are in place:
@@ -390,19 +388,16 @@ If automatic download fails (e.g., due to network restrictions), you can manuall
 ### Common Issues
 
 1. **"Java is not installed"**
-
     - Install Java JRE 8 or higher
     - Ensure `java` is in your system PATH
     - Verify with: `java -version`
 
 2. **"File not found" errors**
-
     - Check that the PDF path is correct
     - Use absolute paths for better reliability
     - Ensure the file has read permissions
 
 3. **"Buffer size exceeded"**
-
     - Increase maxBuffer option
     - Process large PDFs page by page
     - Consider splitting very large PDFs
@@ -441,7 +436,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ## 📊 Dependencies
 
-- **Production**: Apache Tika 3.1.0, Apache PDFBox 2.0.33
+- **Production**: Apache Tika 3.2.0, Apache PDFBox 2.0.34
 - **Development**: See package.json for development dependencies
 
 ---

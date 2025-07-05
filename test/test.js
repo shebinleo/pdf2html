@@ -4,7 +4,7 @@ const chai = require('chai');
 
 const { expect } = chai;
 const should = chai.should();
-chai.use(require('chai-as-promised'));
+
 const pdf2html = require('../index');
 
 const pdfFilepath = path.join(__dirname, '/../sample.pdf');
@@ -55,6 +55,19 @@ const pdfFileMeta = {
     'pdf:docinfo:created': '2006-03-01T07:28:26Z',
 };
 
+// Helper function to assert that a promise rejects with a specific error
+async function expectReject(promise, errorType = Error, errorMessage = null) {
+    try {
+        await promise;
+        expect.fail('Expected promise to be rejected');
+    } catch (error) {
+        expect(error).to.be.an.instanceOf(errorType);
+        if (errorMessage) {
+            expect(error.message).to.match(errorMessage);
+        }
+    }
+}
+
 describe('PDF to HTML', () => {
     describe('File path input', () => {
         it('should return html for the pdf file', async () => {
@@ -64,7 +77,7 @@ describe('PDF to HTML', () => {
         });
 
         it('should return error for the pdf file that does not exist', async () => {
-            await expect(pdf2html.html(pdfInvalidFilepath)).to.be.rejectedWith(Error);
+            await expectReject(pdf2html.html(pdfInvalidFilepath));
         });
 
         it('should handle custom maxBuffer option', async () => {
@@ -106,7 +119,7 @@ describe('PDF to Text', () => {
         });
 
         it('should return error for the pdf file that does not exist', async () => {
-            await expect(pdf2html.text(pdfInvalidFilepath)).to.be.rejectedWith(Error);
+            await expectReject(pdf2html.text(pdfInvalidFilepath));
         });
     });
 
@@ -153,7 +166,7 @@ describe('PDF to Pages', () => {
         });
 
         it('should return error for the pdf file that does not exist', async () => {
-            await expect(pdf2html.pages(pdfInvalidFilepath)).to.be.rejectedWith(Error);
+            await expectReject(pdf2html.pages(pdfInvalidFilepath));
         });
     });
 
@@ -192,7 +205,7 @@ describe('PDF to Meta', () => {
         });
 
         it('should return error for the pdf file that does not exist', async () => {
-            await expect(pdf2html.meta(pdfInvalidFilepath)).to.be.rejectedWith(Error);
+            await expectReject(pdf2html.meta(pdfInvalidFilepath));
         });
     });
 
@@ -231,7 +244,7 @@ describe('PDF to Thumbnail', () => {
         });
 
         it('should return error for the pdf file that does not exist', async () => {
-            await expect(pdf2html.thumbnail(pdfInvalidFilepath)).to.be.rejectedWith(Error);
+            await expectReject(pdf2html.thumbnail(pdfInvalidFilepath));
         });
     });
 
@@ -255,34 +268,34 @@ describe('PDF to Thumbnail', () => {
         });
 
         it('should return error for invalid pdf buffer', async () => {
-            await expect(pdf2html.thumbnail(invalidBuffer)).to.be.rejectedWith(Error);
+            await expectReject(pdf2html.thumbnail(invalidBuffer));
         });
     });
 });
 
 describe('Edge Cases and Error Handling', () => {
     it('should handle null input', async () => {
-        await expect(pdf2html.html(null)).to.be.rejectedWith(Error);
+        await expectReject(pdf2html.html(null));
     });
 
     it('should handle undefined input', async () => {
-        await expect(pdf2html.html(undefined)).to.be.rejectedWith(Error);
+        await expectReject(pdf2html.html(undefined));
     });
 
     it('should handle empty string input', async () => {
-        await expect(pdf2html.html('')).to.be.rejectedWith(Error);
+        await expectReject(pdf2html.html(''));
     });
 
     it('should handle non-buffer, non-string input', async () => {
-        await expect(pdf2html.html(123)).to.be.rejectedWith(Error);
-        await expect(pdf2html.html({})).to.be.rejectedWith(Error);
-        await expect(pdf2html.html([])).to.be.rejectedWith(Error);
+        await expectReject(pdf2html.html(123));
+        await expectReject(pdf2html.html({}));
+        await expectReject(pdf2html.html([]));
     });
 
     it('should handle empty buffer', async () => {
         const emptyBuffer = Buffer.alloc(0);
         // Tika throws an error for empty files
-        await expect(pdf2html.html(emptyBuffer)).to.be.rejectedWith(/ZeroByteFileException|0 bytes/);
+        await expectReject(pdf2html.html(emptyBuffer), Error, /ZeroByteFileException|0 bytes/);
     });
 
     it('should clean up temp files even on error', async () => {
