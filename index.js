@@ -14,6 +14,7 @@ module.exports = {
     text: PDFProcessor.toText.bind(PDFProcessor),
     meta: PDFProcessor.extractMetadata.bind(PDFProcessor),
     thumbnail: PDFProcessor.generateThumbnail.bind(PDFProcessor),
+    extractImages: PDFProcessor.extractImages.bind(PDFProcessor),
 
     // Export classes for advanced usage
     PDFProcessor,
