@@ -13,11 +13,11 @@ const fsMkdir = promisify(fs.mkdir);
 
 const DEPENDENCIES = {
     [constants.VENDOR_PDF_BOX_JAR]: {
-        url: 'https://archive.apache.org/dist/pdfbox/2.0.33/pdfbox-app-2.0.33.jar',
-        size: 12800000, // Approximate size in bytes for progress tracking
+        url: 'https://archive.apache.org/dist/pdfbox/2.0.34/pdfbox-app-2.0.34.jar',
+        size: 12900000, // Approximate size in bytes for progress tracking
     },
     [constants.VENDOR_TIKA_JAR]: {
-        url: 'https://archive.apache.org/dist/tika/3.1.0/tika-app-3.1.0.jar',
+        url: 'https://archive.apache.org/dist/tika/3.2.0/tika-app-3.2.0.jar',
         size: 56200000, // Approximate size in bytes
     },
 };
