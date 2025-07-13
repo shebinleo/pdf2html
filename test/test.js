@@ -1,15 +1,16 @@
 const path = require('path');
 const fs = require('fs');
 const chai = require('chai');
+const fse = require('fs-extra');
 
 const { expect } = chai;
 const should = chai.should();
 
 const pdf2html = require('../index');
 
-const pdfFilepath = path.join(__dirname, '/../sample.pdf');
+const pdfFilepath = path.join(__dirname, './sample.pdf');
 const pdfThumbnailFilepath = path.join(__dirname, '/../files/image/sample.png');
-const pdfInvalidFilepath = path.join(__dirname, '/../sample2.pdf');
+const pdfInvalidFilepath = path.join(__dirname, './sample2.pdf');
 
 // Load PDF buffer for buffer-based tests
 const pdfBuffer = fs.readFileSync(pdfFilepath);
@@ -226,10 +227,22 @@ describe('PDF to Meta', () => {
 });
 
 describe('PDF to Thumbnail', () => {
+    const tempDir = path.join(__dirname, '../files/temp_thumbnails');
+
+    beforeEach(async () => {
+        await fse.ensureDir(tempDir);
+    });
+
+    afterEach(async () => {
+        await fse.remove(tempDir);
+    });
+
     describe('File path input', () => {
         it('should return thumbnail for the pdf file', async () => {
-            const thumbnailPath = await pdf2html.thumbnail(pdfFilepath);
-            expect(thumbnailPath).to.equal(pdfThumbnailFilepath);
+            const thumbnailPath = await pdf2html.thumbnail(pdfFilepath, { outputDirectory: tempDir });
+            expect(thumbnailPath).to.be.a('string');
+            expect(thumbnailPath).to.include('.png');
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return thumbnail with custom options', async () => {
@@ -238,22 +251,24 @@ describe('PDF to Thumbnail', () => {
                 imageType: 'png',
                 width: 200,
                 height: 300,
+                outputDirectory: tempDir,
             });
             expect(thumbnailPath).to.be.a('string');
             expect(thumbnailPath).to.include('.png');
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return error for the pdf file that does not exist', async () => {
-            await expectReject(pdf2html.thumbnail(pdfInvalidFilepath));
+            await expectReject(pdf2html.thumbnail(pdfInvalidFilepath, { outputDirectory: tempDir }));
         });
     });
 
     describe('Buffer input', () => {
         it('should return thumbnail for the pdf buffer', async () => {
-            const thumbnailPath = await pdf2html.thumbnail(pdfBuffer);
+            const thumbnailPath = await pdf2html.thumbnail(pdfBuffer, { outputDirectory: tempDir });
             expect(thumbnailPath).to.be.a('string');
             expect(thumbnailPath).to.include('.png');
-            // Note: Buffer input creates temp files, so path won't match exactly
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return thumbnail with custom options for buffer', async () => {
@@ -262,13 +277,15 @@ describe('PDF to Thumbnail', () => {
                 imageType: 'jpg',
                 width: 320,
                 height: 480,
+                outputDirectory: tempDir,
             });
             expect(thumbnailPath).to.be.a('string');
             expect(thumbnailPath).to.include('.jpg');
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return error for invalid pdf buffer', async () => {
-            await expectReject(pdf2html.thumbnail(invalidBuffer));
+            await expectReject(pdf2html.thumbnail(invalidBuffer, { outputDirectory: tempDir }));
         });
     });
 });
