@@ -1,15 +1,16 @@
 const path = require('path');
 const fs = require('fs');
 const chai = require('chai');
+const fse = require('fs-extra');
 
 const { expect } = chai;
 const should = chai.should();
 
 const pdf2html = require('../index');
 
-const pdfFilepath = path.join(__dirname, '/../sample.pdf');
+const pdfFilepath = path.join(__dirname, './sample.pdf');
 const pdfThumbnailFilepath = path.join(__dirname, '/../files/image/sample.png');
-const pdfInvalidFilepath = path.join(__dirname, '/../sample2.pdf');
+const pdfInvalidFilepath = path.join(__dirname, './sample2.pdf');
 
 // Load PDF buffer for buffer-based tests
 const pdfBuffer = fs.readFileSync(pdfFilepath);
@@ -226,10 +227,22 @@ describe('PDF to Meta', () => {
 });
 
 describe('PDF to Thumbnail', () => {
+    const tempDir = path.join(__dirname, '../files/temp_thumbnails');
+
+    beforeEach(async () => {
+        await fse.ensureDir(tempDir);
+    });
+
+    afterEach(async () => {
+        await fse.remove(tempDir);
+    });
+
     describe('File path input', () => {
         it('should return thumbnail for the pdf file', async () => {
-            const thumbnailPath = await pdf2html.thumbnail(pdfFilepath);
-            expect(thumbnailPath).to.equal(pdfThumbnailFilepath);
+            const thumbnailPath = await pdf2html.thumbnail(pdfFilepath, { outputDirectory: tempDir });
+            expect(thumbnailPath).to.be.a('string');
+            expect(thumbnailPath).to.include('.png');
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return thumbnail with custom options', async () => {
@@ -238,22 +251,24 @@ describe('PDF to Thumbnail', () => {
                 imageType: 'png',
                 width: 200,
                 height: 300,
+                outputDirectory: tempDir,
             });
             expect(thumbnailPath).to.be.a('string');
             expect(thumbnailPath).to.include('.png');
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return error for the pdf file that does not exist', async () => {
-            await expectReject(pdf2html.thumbnail(pdfInvalidFilepath));
+            await expectReject(pdf2html.thumbnail(pdfInvalidFilepath, { outputDirectory: tempDir }));
         });
     });
 
     describe('Buffer input', () => {
         it('should return thumbnail for the pdf buffer', async () => {
-            const thumbnailPath = await pdf2html.thumbnail(pdfBuffer);
+            const thumbnailPath = await pdf2html.thumbnail(pdfBuffer, { outputDirectory: tempDir });
             expect(thumbnailPath).to.be.a('string');
             expect(thumbnailPath).to.include('.png');
-            // Note: Buffer input creates temp files, so path won't match exactly
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return thumbnail with custom options for buffer', async () => {
@@ -262,13 +277,15 @@ describe('PDF to Thumbnail', () => {
                 imageType: 'jpg',
                 width: 320,
                 height: 480,
+                outputDirectory: tempDir,
             });
             expect(thumbnailPath).to.be.a('string');
             expect(thumbnailPath).to.include('.jpg');
+            expect(await fse.pathExists(thumbnailPath)).to.be.true;
         });
 
         it('should return error for invalid pdf buffer', async () => {
-            await expectReject(pdf2html.thumbnail(invalidBuffer));
+            await expectReject(pdf2html.thumbnail(invalidBuffer, { outputDirectory: tempDir }));
         });
     });
 });
@@ -329,5 +346,122 @@ describe('Buffer vs File Path Consistency', () => {
         const metaFromFile = await pdf2html.meta(pdfFilepath);
         const metaFromBuffer = await pdf2html.meta(pdfBuffer);
         expect(metaFromFile).to.deep.equal(metaFromBuffer);
+    });
+});
+
+// Internal module tests
+const CommandExecutor = require('../lib/CommandExecutor');
+const { PDFProcessingError } = require('../lib/errors');
+
+describe('CommandExecutor', () => {
+    describe('execute', () => {
+        it('should execute a simple command successfully', async () => {
+            const result = await CommandExecutor.execute('echo', ['hello']);
+            expect(result.trim()).to.equal('hello');
+        });
+
+        it('should handle commands with multiple arguments', async () => {
+            const result = await CommandExecutor.execute('echo', ['hello', 'world']);
+            expect(result.trim()).to.equal('hello world');
+        });
+
+        it('should reject when command exits with non-zero code', async () => {
+            try {
+                await CommandExecutor.execute('sh', ['-c', 'exit 1']);
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).to.be.instanceOf(PDFProcessingError);
+                expect(error.command).to.include('sh -c exit 1');
+                expect(error.exitCode).to.equal(1);
+            }
+        });
+
+        it('should include stderr in error message when command fails', async () => {
+            try {
+                await CommandExecutor.execute('sh', ['-c', 'echo "error message" >&2; exit 1']);
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).to.be.instanceOf(PDFProcessingError);
+                expect(error.message).to.include('error message');
+            }
+        });
+
+        it('should handle spawn errors for non-existent commands', async () => {
+            try {
+                await CommandExecutor.execute('nonexistentcommand123456', ['arg']);
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).to.be.instanceOf(PDFProcessingError);
+                expect(error.message).to.include('Failed to spawn process');
+                expect(error.command).to.include('nonexistentcommand123456');
+            }
+        });
+
+
+        it('should capture stdout correctly', async () => {
+            const result = await CommandExecutor.execute('sh', ['-c', 'echo "line1"; echo "line2"']);
+            expect(result).to.include('line1');
+            expect(result).to.include('line2');
+        });
+
+        it('should pass options to spawn', async () => {
+            const result = await CommandExecutor.execute('pwd', [], { cwd: '/tmp' });
+            // On macOS, /tmp is a symlink to /private/tmp
+            expect(result.trim()).to.match(/\/tmp$|\/private\/tmp$/);
+        });
+    });
+});
+
+// Additional internal module tests for coverage
+const FileManager = require('../lib/FileManager');
+const HTMLParser = require('../lib/HTMLParser');
+const ImageProcessor = require('../lib/ImageProcessor');
+
+describe('Internal Modules - Coverage Tests', () => {
+    describe('FileManager', () => {
+        it('should use default .pdf extension when not provided', async () => {
+            const buffer = Buffer.from('test content');
+            const filePath = await FileManager.createTempFileFromBuffer(buffer);
+            
+            expect(filePath).to.include('.pdf');
+            
+            // Clean up
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        });
+    });
+
+    describe('HTMLParser', () => {
+        it('should use default empty options when not provided', () => {
+            const html = '<html><body><div class="page">Page 1</div><div class="page">Page 2</div></body></html>';
+            const pages = HTMLParser.extractPages(html);
+            
+            expect(pages).to.be.an('array');
+            expect(pages).to.have.length(2);
+            expect(pages[0]).to.include('Page 1');
+            expect(pages[1]).to.include('Page 2');
+        });
+    });
+
+    describe('ImageProcessor', () => {
+        it('should throw error when sharp fails to process image', async () => {
+            // Create a file that's not a valid image
+            const invalidImagePath = path.join(__dirname, 'test-invalid.txt');
+            fs.writeFileSync(invalidImagePath, 'This is not an image');
+            
+            try {
+                await ImageProcessor.resize(invalidImagePath, 100, 100);
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).to.exist;
+                expect(error.message).to.include('Missing output file');
+            } finally {
+                // Clean up
+                if (fs.existsSync(invalidImagePath)) {
+                    fs.unlinkSync(invalidImagePath);
+                }
+            }
+        });
     });
 });

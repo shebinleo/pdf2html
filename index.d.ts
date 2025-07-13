@@ -130,6 +130,15 @@ declare module 'pdf2html' {
     export function thumbnail(input: PDFInput, options?: ThumbnailOptions): Promise<string>;
 
     /**
+     * Extract images from PDF
+     * @param input - Path to PDF file or PDF buffer
+     * @param options - Image extraction options
+     * @returns Promise resolving to an array of paths to extracted images
+     * @throws Error if a file not found or processing fails
+     */
+    export function extractImages(input: PDFInput, options?: ProcessingOptions): Promise<string[]>;
+
+    /**
      * PDF processing error class
      */
     export class PDFProcessingError extends Error {

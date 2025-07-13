@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/npm/l/pdf2html.svg)](https://www.npmjs.org/package/pdf2html)
 [![Node.js Version](https://img.shields.io/node/v/pdf2html.svg)](https://nodejs.org)
 
-> Convert PDF files to HTML, extract text, generate thumbnails, and extract metadata using Apache Tika and PDFBox
+> Convert PDF files to HTML, extract text, generate thumbnails, extract images, and extract metadata using Apache Tika and PDFBox
 
 ## 🚀 Features
 
@@ -15,6 +15,7 @@
 - **Page-by-page processing** - Process PDFs page by page
 - **Metadata extraction** - Extract author, title, creation date, and more
 - **Thumbnail generation** - Generate preview images from PDF pages
+- **Image extraction** - Extract all embedded images from PDFs
 - **Buffer support** - Process PDFs from memory buffers or file paths
 - **TypeScript support** - Full type definitions included
 - **Async/Promise based** - Modern async API
@@ -142,6 +143,30 @@ const thumbnailPath = await pdf2html.thumbnail(pdfBuffer, {
 });
 ```
 
+### Extract Images
+
+```javascript
+// From file path
+const imagePaths = await pdf2html.extractImages('path/to/document.pdf');
+console.log('Extracted images:', imagePaths);
+// Output: ['/absolute/path/to/files/image/document1.jpg', '/absolute/path/to/files/image/document2.png', ...]
+
+// From buffer
+const pdfBuffer = fs.readFileSync('path/to/document.pdf');
+const imagePaths = await pdf2html.extractImages(pdfBuffer);
+
+// With custom output directory
+const imagePaths = await pdf2html.extractImages(pdfBuffer, {
+    outputDirectory: './extracted-images', // Custom output directory
+});
+
+// With custom buffer size for large PDFs
+const imagePaths = await pdf2html.extractImages('large-document.pdf', {
+    outputDirectory: './output',
+    maxBuffer: 1024 * 1024 * 10, // 10MB buffer
+});
+```
+
 ## 💻 TypeScript Support
 
 This package includes TypeScript type definitions out of the box. No need to install `@types/pdf2html`.
@@ -151,7 +176,7 @@ This package includes TypeScript type definitions out of the box. No need to ins
 ```typescript
 import * as pdf2html from 'pdf2html';
 // or
-import { html, text, pages, meta, thumbnail, PDFMetadata, PDFProcessingError } from 'pdf2html';
+import { html, text, pages, meta, thumbnail, extractImages, PDFMetadata, PDFProcessingError } from 'pdf2html';
 
 async function convertPDF() {
     try {
