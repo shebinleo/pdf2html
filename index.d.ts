@@ -136,7 +136,7 @@ declare module 'pdf2html' {
      * @returns Promise resolving to an array of paths to extracted images
      * @throws Error if a file not found or processing fails
      */
-    export function extractImages(input: PDFInput, options?: ExtractImageOptions): Promise<string[]>;
+    export function extractImages(input: PDFInput, options?: ProcessingOptions): Promise<string[]>;
 
     /**
      * PDF processing error class
