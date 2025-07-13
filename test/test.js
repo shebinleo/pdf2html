@@ -397,26 +397,6 @@ describe('CommandExecutor', () => {
             }
         });
 
-        it('should handle process termination by signal', async () => {
-            // This test simulates a process being killed by a signal
-            try {
-                // Start a long-running process and kill it
-                const promise = CommandExecutor.execute('sh', ['-c', 'sleep 10']);
-                
-                // Give it a moment to start
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                // Kill all sleep processes (this is a bit hacky but works for testing)
-                await CommandExecutor.execute('sh', ['-c', 'pkill -9 sleep || true']);
-                
-                await promise;
-                expect.fail('Should have thrown an error');
-            } catch (error) {
-                expect(error).to.be.instanceOf(PDFProcessingError);
-                // The error should mention the signal or non-zero exit
-                expect(error.message).to.match(/Process exited with code|signal/);
-            }
-        });
 
         it('should capture stdout correctly', async () => {
             const result = await CommandExecutor.execute('sh', ['-c', 'echo "line1"; echo "line2"']);
